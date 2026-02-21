@@ -1,5 +1,4 @@
-import { Box, Button, Link, TextField, Typography } from "@mui/material";
-import Image from "next/image";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 export default function Home() {
   return (
