@@ -1,8 +1,8 @@
 import axiosInstance from "../lib/axios/auth.interceptor";
 
-export class UsersService {
+export class PersonsService {
     async list() {
-        const response = await axiosInstance.get('/objeto/users');
+        const response = await axiosInstance.get('/objeto/persons');
         return response.data;
     }
 }
