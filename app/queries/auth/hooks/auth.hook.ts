@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+
 import { useMutation } from '@tanstack/react-query';
 import { AuthService } from '../../../services/auth.queries';
 import { useRouter } from 'next/navigation';
@@ -22,12 +24,14 @@ export const useLogin = () => {
 };
 
 export const useRegister = () => {
+    const router = useRouter();
     return useMutation({
         mutationFn: (data: any) => authService.register(data),
         onSuccess: (response: any) => {
+            router.push('/login');
         },
         onError: (error) => {
-            console.error('Erro no login', error);
+            console.error('Erro ao criar conta', error);
         }
     });
 };

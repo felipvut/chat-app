@@ -12,12 +12,23 @@ axiosInstance.interceptors.request.use(
   (request) => {
 
     const token = localStorage.getItem('@chat-app/token');
-    if(token) {
-        request.headers.Authorization = token;
+    if (token) {
+      request.headers.Authorization = token;
     }
 
     return request;
   },
 );
 
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('@chat-app/token');
+      window.dispatchEvent(new Event('unauthorized'));
+    }
+
+    return Promise.reject(error);
+  }
+);
 export default axiosInstance;
