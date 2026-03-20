@@ -1,11 +1,11 @@
 'use client'
 
 import { Box, Button, TextField, Typography, Alert } from "@mui/material";
-import { useLogin } from "../queries/auth/hooks/auth.hook";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { LoginFormData, loginSchema } from "../queries/auth/schemas/login.schema";
+import { useLogin } from "@/app/hooks/auth/auth.hook";
+import { LoginFormData, loginSchema } from "@/app/types/login.schema";
 
 export default function Home() {
   const router = useRouter();

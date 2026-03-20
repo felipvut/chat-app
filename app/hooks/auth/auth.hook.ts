@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { AuthService } from '@/app/services/auth.queries';
 import { useMutation } from '@tanstack/react-query';
-import { AuthService } from '../../../services/auth.queries';
+
 import { useRouter } from 'next/navigation';
 
 const authService = new AuthService();

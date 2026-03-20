@@ -2,12 +2,12 @@
 
 import { Box, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { UsersService } from "../services/users.queries";
+import { UsersService } from "../../services/users.queries";
 
 export default function Home() {
   const usersService = new UsersService()
 
-  const { data, isPending, error } = useQuery({
+  const { data } = useQuery({
     queryKey: ['users'],
     queryFn: () => usersService.list().then(r => r),
   })

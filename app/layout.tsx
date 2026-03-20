@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ReactQueryProvider from "./QueryClientProvider";
-import { AuthListener } from "./authListener";
+import { AuthListener } from "./components/AuthListener";
 
 export const metadata: Metadata = {
   title: "Create Next App",

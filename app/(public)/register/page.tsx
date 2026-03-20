@@ -2,11 +2,12 @@
 
 import { Box, Button, Snackbar, SnackbarContent, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useRegister } from "../queries/auth/hooks/auth.hook";
-import { RegisterFormData, registerSchema } from "../queries/auth/schemas/register.schema";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useRegister } from "@/app/hooks/auth/auth.hook";
+import { RegisterFormData, registerSchema } from "@/app/types/register.schema";
 
 export default function Home() {
   const router = useRouter();
