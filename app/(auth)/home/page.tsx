@@ -38,7 +38,7 @@ export default function Home() {
         {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data?.data?.data?.map((x: any) => (
-            <ButtonBase key={x.uuid}
+            <ButtonBase key={x.uuid} onClick={() => router.push('/chat?uuid=' + x?.uuid)}
               sx={{
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'start', width: '100%',

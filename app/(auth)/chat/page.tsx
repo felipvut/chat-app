@@ -1,18 +1,37 @@
 'use client'
 
-import { Box, Button, ButtonBase, Chip, Divider, TextField, Typography } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { Box, Button, Chip, Divider, TextField, Typography } from "@mui/material";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
+import { useSendMessage } from "@/app/hooks/chat/chat.hook";
+import { useState } from "react";
+
+export interface Message {
+  uuid?: string;
+  message?: string;
+  chats_uuid?: string;
+  is_author?: boolean
+}
 
 export default function Home() {
-  const chatsService = new ChatsService()
-  const router = useRouter()
+  const queryClient = useQueryClient();
+  const chatsService = new ChatsService();
+  const router = useRouter();
+  const params = useSearchParams();
+  const uuid = params.get('uuid');
+  const [message, setMessage] = useState('');
 
-  const { data, isFetching } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => chatsService.myChats().then(r => r),
+  const { data: chat, isFetching } = useQuery({
+    queryKey: ['chat'],
+    queryFn: () => chatsService.getChat(uuid?.toString() || '').then(r => r),
+  })
+
+  const { data: messagesData } = useQuery({
+    queryKey: ['messages', uuid],
+    queryFn: () => chatsService.getMessages(uuid?.toString() || '').then(r => r),
+    refetchInterval: 10000
   })
 
   const logOut = () => {
@@ -20,8 +39,27 @@ export default function Home() {
     router.push('/login');
   }
 
+  const { mutate } = useSendMessage(() => {
+    setMessage('');
+    queryClient.invalidateQueries({
+      queryKey: ['messages', uuid],
+    });
+  });
+
+  const sendMessage = () => {
+    if (!uuid?.toString() || '') return
+    if (!message) return
+
+    mutate({
+      chats_uuid: uuid?.toString() || '',
+      message
+    })
+  }
+
+  const messages = messagesData?.data ? messagesData?.data : []
+
   return (
-    <Box className="container">
+    <Box>
       <header style={{ background: '#1976d2', height: 55, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Typography sx={{ ml: 2, color: '#fff' }}>Meu Perfil</Typography>
         <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={logOut}>Sair</Button>
@@ -31,7 +69,7 @@ export default function Home() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Image src="/user.png" width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
-              <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>Matheus</Typography>
+              <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name}</Typography>
             </Box>
             <Button sx={{ mb: 2 }} variant="contained" onClick={() => router.back}>Voltar</Button>
           </Box>
@@ -43,133 +81,33 @@ export default function Home() {
           <Typography color="textSecondary" sx={{ textAlign: 'center', mt: 3 }}>Carregando...</Typography>
         }
         <Box sx={{ height: 'calc(100vh - 68px - 55px - 16px - 90px)' }}>
-          <Box sx={{ textAlign: 'left', mb: 3 }}>
-            <Chip label='Isso é um teste'
-              sx={{
-                height: 'auto',
-                fontSize: 15,
-                padding: 1,
-                textAlign: 'justify',
-                '& .MuiChip-label': {
-                  display: 'block',
-                  whiteSpace: 'normal',
-                  overflowWrap: 'break-word',
-                  maxWidth: '78vw'
-                },
-              }} />
-          </Box>
-          <Box sx={{ textAlign: 'right', mb: 3 }}>
-            <Chip color="info"
-              sx={{
-                height: 'auto',
-                fontSize: 15,
-                padding: 1,
-                textAlign: 'justify',
-                '& .MuiChip-label': {
-                  display: 'block',
-                  whiteSpace: 'normal',
-                  overflowWrap: 'break-word',
-                  maxWidth: '78vw'
-                },
-              }}
-              label='Bom dia Família Linda e 
-Abençoada de Jesus
-
-Isaías 25.1 | ARA
-1 Ó Senhor, tu és o meu Deus; exaltar-te-ei e louvarei o teu nome, porque fizeste maravilhas; os teus conselhos antigos são verdade e firmeza. 
-
-Enquanto há muitas coisas pelas quais podemos louvar a Deus, uma das mais significativas é Sua fidelidade em fazer tudo o que prometeu. Somos grandes sonhadores, mas somente Deus pode realizar Seus planos.
-
-Hoje tem GF no Apolo🙏🏻
-Deus Abençoe 
-Graça e Paz' />
-          </Box>
-          <Box sx={{ textAlign: 'left', mb: 3 }}>
-            <Chip label='Isso é um teste'
-              sx={{
-                height: 'auto',
-                fontSize: 15,
-                padding: 1,
-                textAlign: 'justify',
-                '& .MuiChip-label': {
-                  display: 'block',
-                  whiteSpace: 'normal',
-                  overflowWrap: 'break-word',
-                  maxWidth: '78vw'
-                },
-              }} />
-          </Box>
-          <Box sx={{ textAlign: 'right', mb: 3 }}>
-            <Chip color="info"
-              sx={{
-                height: 'auto',
-                fontSize: 15,
-                padding: 1,
-                textAlign: 'justify',
-                '& .MuiChip-label': {
-                  display: 'block',
-                  whiteSpace: 'normal',
-                  overflowWrap: 'break-word',
-                  maxWidth: '78vw'
-                },
-              }}
-              label='Bom dia Família Linda e 
-Abençoada de Jesus
-
-Isaías 25.1 | ARA
-1 Ó Senhor, tu és o meu Deus; exaltar-te-ei e louvarei o teu nome, porque fizeste maravilhas; os teus conselhos antigos são verdade e firmeza. 
-
-Enquanto há muitas coisas pelas quais podemos louvar a Deus, uma das mais significativas é Sua fidelidade em fazer tudo o que prometeu. Somos grandes sonhadores, mas somente Deus pode realizar Seus planos.
-
-Hoje tem GF no Apolo🙏🏻
-Deus Abençoe 
-Graça e Paz' />
-          </Box>
-          <Box sx={{ textAlign: 'left', mb: 3 }}>
-            <Chip label='Isso é um teste'
-              sx={{
-                height: 'auto',
-                fontSize: 15,
-                padding: 1,
-                textAlign: 'justify',
-                '& .MuiChip-label': {
-                  display: 'block',
-                  whiteSpace: 'normal',
-                  overflowWrap: 'break-word',
-                  maxWidth: '78vw'
-                },
-              }} />
-          </Box>
-          <Box sx={{ textAlign: 'right', mb: 3 }}>
-            <Chip color="info"
-              sx={{
-                height: 'auto',
-                fontSize: 15,
-                padding: 1,
-                textAlign: 'justify',
-                '& .MuiChip-label': {
-                  display: 'block',
-                  whiteSpace: 'normal',
-                  overflowWrap: 'break-word',
-                  maxWidth: '78vw'
-                },
-              }}
-              label='Bom dia Família Linda e 
-Abençoada de Jesus
-
-Isaías 25.1 | ARA
-1 Ó Senhor, tu és o meu Deus; exaltar-te-ei e louvarei o teu nome, porque fizeste maravilhas; os teus conselhos antigos são verdade e firmeza. 
-
-Enquanto há muitas coisas pelas quais podemos louvar a Deus, uma das mais significativas é Sua fidelidade em fazer tudo o que prometeu. Somos grandes sonhadores, mas somente Deus pode realizar Seus planos.
-
-Hoje tem GF no Apolo🙏🏻
-Deus Abençoe 
-Graça e Paz' />
-          </Box>
+          {
+            messages?.map((message: Message) => (
+              <Box key={message.uuid} sx={{ textAlign: message?.is_author ? 'right' : 'left', mb: 3 }}>
+                <Chip label={message.message}
+                  color={message?.is_author ? 'primary' : 'default'}
+                  sx={{
+                    height: 'auto',
+                    fontSize: 15,
+                    padding: 1,
+                    textAlign: 'justify',
+                    '& .MuiChip-label': {
+                      display: 'block',
+                      whiteSpace: 'normal',
+                      overflowWrap: 'break-word',
+                      maxWidth: '78vw'
+                    },
+                  }} />
+              </Box>
+            ))
+          }
         </Box>
         <Box sx={{ display: 'flex', p: 1, width: '100%', position: 'fixed', left: 0, bottom: 0, zIndex: 999999999999, background: '#fff' }}>
-          <TextField name="message" placeholder="Digite sua mensagem..." fullWidth />
-          <Button sx={{ ml: 2 }}>Enviar</Button>
+          <TextField
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            name="message" placeholder="Digite sua mensagem..." fullWidth />
+          <Button sx={{ ml: 2 }} onClick={sendMessage}>Enviar</Button>
         </Box>
       </Box>
     </Box >
