@@ -11,4 +11,9 @@ export class AuthService {
         const response = await axiosInstance.post('/register', data);
         return response.data;
     }
+
+    async me() {
+        const response = await axiosInstance.get('/me');
+        return response.data;
+    }
 }

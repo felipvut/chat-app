@@ -21,7 +21,7 @@ export default function Home() {
   }
 
   return (
-    <Box className="container">
+    <Box>
       <header style={{ background: '#1976d2', height: 55, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Typography sx={{ ml: 2, color: '#fff' }}>Meu Perfil</Typography>
         <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={logOut}>Sair</Button>
@@ -38,25 +38,27 @@ export default function Home() {
         {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data?.data?.data?.map((x: any) => (
-            <ButtonBase key={x.uuid} onClick={() => router.push('/chat?uuid=' + x?.uuid)}
-              sx={{
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'start', width: '100%',
-              }}>
-              <Box sx={{ display: 'flex', width: '100%', mb: 2, alignItems: 'center' }}>
-                <Box sx={{ mr: 2 }}>
-                  <Image src="/user.png" width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
-                </Box>
-                <Box sx={{
-                  display: 'flex', width: '100%', flexDirection: 'column',
-                  alignItems: 'start'
+            <Box key={x.uuid}>
+              <ButtonBase onClick={() => router.push('/chat?uuid=' + x?.uuid)}
+                sx={{
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'start', width: '100%',
                 }}>
-                  <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{x.name}</Typography>
-                  <Typography color="textSecondary" sx={{ fontSize: 17, mb: 1, p: 0, m: 0 }}>teste</Typography>
+                <Box sx={{ display: 'flex', width: '100%', mb: 2, alignItems: 'center' }}>
+                  <Box sx={{ mr: 2 }}>
+                    <Image src="/user.png" width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
+                  </Box>
+                  <Box sx={{
+                    display: 'flex', width: '100%', flexDirection: 'column',
+                    alignItems: 'start'
+                  }}>
+                    <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{x.name}</Typography>
+                    <Typography color="textSecondary" sx={{ fontSize: 17, mb: 1, p: 0, m: 0 }}>teste</Typography>
+                  </Box>
                 </Box>
-              </Box>
+              </ButtonBase>
               <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
-            </ButtonBase>
+            </Box>
           ))
         }
       </Box>

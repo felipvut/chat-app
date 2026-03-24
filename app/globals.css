@@ -14,3 +14,9 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.box-chat {
+  height: calc(100vh - 68px - 55px - 16px - 90px);
+  margin-bottom: 56px;
+  overflow-y: scroll;
+}
