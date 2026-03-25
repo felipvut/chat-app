@@ -1,10 +1,11 @@
 import { io } from 'socket.io-client';
 
 const socket = io(process.env.NEXT_PUBLIC_API_URL, {
-    auth: {
-        token: localStorage.getItem('@chat-app/token'),
-        chat: localStorage.getItem('@chat-app/chat')
+    auth: (cb) => {
+        const currentToken = localStorage.getItem('@chat-app/token');
+        const currentChat = localStorage.getItem('@chat-app/chat');
+        cb({ token: currentToken, chat: currentChat });
     }
-}); 
+});
 
 export default socket;
