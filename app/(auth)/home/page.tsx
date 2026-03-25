@@ -1,11 +1,17 @@
 'use client'
 
-import { Box, Button, ButtonBase, Divider, Typography } from "@mui/material";
+import { Box, Button, ButtonBase, Divider, Fab, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
-import socket from "../chat/socket";
+import { Add } from '@mui/icons-material';
+
+export interface Chat {
+  uuid?: string;
+  name?: string;
+  last_message?: string;
+}
 
 export default function Home() {
   const chatsService = new ChatsService()
@@ -28,21 +34,23 @@ export default function Home() {
         <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={logOut}>Sair</Button>
       </header>
       <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-          <Button sx={{ mb: 2 }} variant="contained" onClick={() => router.push('/persons')}>Adicionar contato</Button>
+        <Box className="add-contact">
+          <Fab sx={{ mb: 2 }} variant="circular" color="primary" onClick={() => router.push('/persons')}>
+            <Add></Add>
+          </Fab>
         </Box>
+
         <Typography variant="h4" color="primary" sx={{ mb: 3 }}>Meus Contatos</Typography>
         {
           isFetching &&
           <Typography color="textSecondary" sx={{ textAlign: 'center', mt: 3 }}>Carregando...</Typography>
         }
         {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          data?.data?.data?.map((x: any) => (
-            <Box key={x.uuid}>
+          data?.data?.data?.map((chat: Chat) => (
+            <Box key={chat.uuid}>
               <ButtonBase onClick={() => {
-                localStorage.setItem('@chat-app/chat', x?.uuid)
-                router.push('/chat?uuid=' + x?.uuid)
+                localStorage.setItem('@chat-app/chat', chat?.uuid || '')
+                router.push('/chat?uuid=' + chat?.uuid)
               }}
                 sx={{
                   display: 'flex', flexDirection: 'column',
@@ -56,8 +64,8 @@ export default function Home() {
                     display: 'flex', width: '100%', flexDirection: 'column',
                     alignItems: 'start'
                   }}>
-                    <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{x.name}</Typography>
-                    <Typography color="textSecondary" sx={{ fontSize: 17, mb: 1, p: 0, m: 0 }}>teste</Typography>
+                    <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat.name}</Typography>
+                    <Typography color="textSecondary" sx={{ fontSize: 17, mb: 1, p: 0, m: 0 }}>{chat?.last_message}</Typography>
                   </Box>
                 </Box>
               </ButtonBase>

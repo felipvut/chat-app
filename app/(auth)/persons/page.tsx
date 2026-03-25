@@ -10,8 +10,8 @@ export default function Persons() {
   const router = useRouter()
 
   const { data, isFetching } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => personsService.list().then(r => r),
+    queryKey: ['news-chats'],
+    queryFn: () => personsService.listNewsChats().then(r => r),
   })
 
   const logOut = () => {
@@ -29,7 +29,7 @@ export default function Persons() {
         <Box sx={{ display: 'flex', justifyContent: 'end' }}>
           <Button sx={{ mb: 2 }} variant="contained" onClick={() => router.push('/home')}>Contatos</Button>
         </Box>
-        <Typography variant="h4" color="primary" sx={{ mb: 3 }}>Usuários</Typography>
+        <Typography variant="h4" color="primary" sx={{ mb: 3 }}>Adicionar Chat</Typography>
         {
           isFetching &&
           <Typography color="textSecondary" sx={{ textAlign: 'center', mt: 3 }}>Carregando...</Typography>

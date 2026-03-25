@@ -5,4 +5,9 @@ export class PersonsService {
         const response = await axiosInstance.get('/objeto/persons');
         return response.data;
     }
+
+    async listNewsChats() {
+        const response = await axiosInstance.get('/news-chats');
+        return response.data;
+    }
 }
