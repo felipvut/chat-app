@@ -53,7 +53,7 @@ export default function Home() {
         };
       });
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
   const sendMessage = () => {
@@ -92,7 +92,13 @@ export default function Home() {
 
   return (
     <Box sx={{ maxHeight: '100vh' }}>
-      <header style={{ background: '#1976d2', height: 55, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <header
+        style={{
+          background: '#1976d2',
+          height: 55, padding: 4,
+          display: "flex", alignItems: "center",
+          justifyContent: "space-between"
+        }}>
         <Typography sx={{ ml: 2, color: '#fff' }}>Meu Perfil</Typography>
         <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={() => {
           socket.close()

@@ -1,11 +1,12 @@
 'use client'
 
-import { Box, Button, ButtonBase, Divider, Fab, Typography } from "@mui/material";
+import { Box, ButtonBase, Divider, Fab, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
 import { Add } from '@mui/icons-material';
+import Header from "@/app/components/Header";
 
 export interface Chat {
   uuid?: string;
@@ -22,17 +23,9 @@ export default function Home() {
     queryFn: () => chatsService.myChats().then(r => r),
   })
 
-  const logOut = () => {
-    localStorage.setItem('@chat-app/token', '');
-    router.push('/login');
-  }
-
   return (
     <Box>
-      <header style={{ background: '#1976d2', height: 55, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Typography sx={{ ml: 2, color: '#fff' }}>Meu Perfil</Typography>
-        <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={logOut}>Sair</Button>
-      </header>
+      <Header />
       <Box sx={{ p: 2 }}>
         <Box className="add-contact">
           <Fab sx={{ mb: 2 }} variant="circular" color="primary" onClick={() => router.push('/persons')}>

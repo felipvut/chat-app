@@ -1,6 +1,10 @@
 import { Message } from "../(auth)/chat/page";
 import axiosInstance from "../lib/axios/auth.interceptor";
 
+export interface NewChat {
+    persons_uuid?: string;
+}
+
 export class ChatsService {
     async myChats() {
         const response = await axiosInstance.get('/my-chats');
@@ -19,6 +23,11 @@ export class ChatsService {
 
     async sendMessage(data: Message) {
         const response = await axiosInstance.post('/messages/' + data?.chats_uuid, data);
+        return response.data;
+    }
+
+    async newChat(data: NewChat) {
+        const response = await axiosInstance.post('/new-chat', data);
         return response.data;
     }
 }
