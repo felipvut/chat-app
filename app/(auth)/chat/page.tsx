@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AuthService } from "@/app/services/auth.queries";
 import "../../globals.css";
 import socket from "./socket";
@@ -25,6 +25,7 @@ export default function Home() {
   const router = useRouter();
   const params = useSearchParams();
   const uuid = params.get('uuid');
+  const ref = useRef(false);
   localStorage.setItem('@chat-app/chat', uuid?.toString() || '')
   const [message, setMessage] = useState('');
 
@@ -34,6 +35,11 @@ export default function Home() {
   })
 
   useEffect(() => {
+    if (ref.current) return;
+    ref.current = true;
+    if (!socket.connected) {
+      socket.connect();
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on('receive_message', (newMessage: any) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,7 +55,7 @@ export default function Home() {
       });
     });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
   const sendMessage = () => {
@@ -89,7 +95,11 @@ export default function Home() {
     <Box sx={{ maxHeight: '100vh' }}>
       <header style={{ background: '#1976d2', height: 55, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Typography sx={{ ml: 2, color: '#fff' }}>Meu Perfil</Typography>
-        <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={logOut}>Sair</Button>
+        <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={() => {
+          socket.close()
+          socket.off('receive_message')
+          logOut()
+        }}>Sair</Button>
       </header>
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -99,7 +109,11 @@ export default function Home() {
               <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name}</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Button variant="contained" size="large" onClick={() => router.back()}>Voltar</Button>
+              <Button variant="contained" size="large" onClick={() => {
+                socket.close()
+                socket.off('receive_message')
+                router.back()
+              }}>Voltar</Button>
             </Box>
           </Box>
           <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
