@@ -1,12 +1,13 @@
 'use client'
 
-import { Box, Button, Chip, Divider, TextField, Typography } from "@mui/material";
+import { Box, Button, ButtonBase, Chip, Divider, TextField, Typography } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AuthService } from "@/app/services/auth.queries";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../globals.css";
 import socket from "./socket";
 
@@ -53,6 +54,12 @@ export default function Home() {
         };
       });
     });
+    const objDiv = document.getElementById("scroll");
+    if (objDiv) {
+      setTimeout(() => {
+        objDiv.scrollTop = objDiv?.scrollHeight;
+      }, 1000)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
@@ -108,17 +115,17 @@ export default function Home() {
       </header>
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+          <Box sx={{ display: 'flex', mb: 1.5 }}>
+            <ButtonBase sx={{ mr: 3 }} onClick={() => {
+              socket.close()
+              socket.off('receive_message')
+              router.back()
+            }}>
+              <ArrowBackIcon sx={{ fontSize: '30px', color: '#5a5a5a' }}></ArrowBackIcon>
+            </ButtonBase>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Image src="/user.png" width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
               <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name}</Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Button variant="contained" size="large" onClick={() => {
-                socket.close()
-                socket.off('receive_message')
-                router.back()
-              }}>Voltar</Button>
             </Box>
           </Box>
           <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
@@ -131,22 +138,7 @@ export default function Home() {
         <Box id="scroll" className="box-chat">
           {
             messages?.map((message: Message) => (
-              <Box key={message.uuid} sx={{ textAlign: message?.author_uuid == user?.data?.person?.uuid ? 'right' : 'left', mb: 3 }}>
-                <Chip label={message.message}
-                  color={message?.author_uuid == user?.data?.person?.uuid ? 'primary' : 'default'}
-                  sx={{
-                    height: 'auto',
-                    fontSize: 15,
-                    padding: 1,
-                    textAlign: 'justify',
-                    '& .MuiChip-label': {
-                      display: 'block',
-                      whiteSpace: 'normal',
-                      overflowWrap: 'break-word',
-                      maxWidth: '78vw'
-                    },
-                  }} />
-              </Box>
+              <MessageComponent key={message.uuid} message={message} user={user} />
             ))
           }
         </Box>
@@ -165,4 +157,37 @@ export default function Home() {
       </Box>
     </Box >
   );
+}
+
+interface Props {
+  message: Message;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  user: any
+}
+
+export function MessageComponent({ message, user }: Props) {
+
+  const messageMemo = useMemo(() => (
+    <Box sx={{ textAlign: message?.author_uuid == user?.data?.person?.uuid ? 'right' : 'left', mb: 3 }}>
+      <Chip label={message.message}
+        color={message?.author_uuid == user?.data?.person?.uuid ? 'primary' : 'default'}
+        sx={{
+          height: 'auto',
+          fontSize: 15,
+          padding: 1,
+          textAlign: 'justify',
+          '& .MuiChip-label': {
+            display: 'block',
+            whiteSpace: 'normal',
+            overflowWrap: 'break-word',
+            maxWidth: '78vw'
+          },
+        }} />
+    </Box>), [message?.author_uuid, message.message, user?.data?.person?.uuid]);
+
+  return (
+    <Box>
+      {messageMemo}
+    </Box>
+  )
 }

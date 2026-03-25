@@ -28,8 +28,9 @@ export default function Home() {
       <Header />
       <Box sx={{ p: 2 }}>
         <Box className="add-contact">
-          <Fab sx={{ mb: 2 }} variant="circular" color="primary" onClick={() => router.push('/persons')}>
+          <Fab sx={{ mb: 2 }} variant="extended" color="primary" onClick={() => router.push('/persons')}>
             <Add></Add>
+            <Typography variant="subtitle1">Adicionar Chat</Typography>
           </Fab>
         </Box>
 
