@@ -21,7 +21,7 @@ body {
   overflow-y: scroll;
 }
 
-.add-contact{
+.add-contact {
   position: fixed;
   bottom: 24px;
   right: 16px;

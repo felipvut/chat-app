@@ -34,7 +34,7 @@ export default function Home() {
           </Fab>
         </Box>
 
-        <Typography variant="h4" color="primary" sx={{ mb: 3 }}>Meus Contatos</Typography>
+        <Typography variant="h4" color="primary" sx={{ mb: 4 }}>Meus Contatos</Typography>
         {
           isFetching &&
           <Typography color="textSecondary" sx={{ textAlign: 'center', mt: 3 }}>Carregando...</Typography>
