@@ -54,12 +54,14 @@ export default function Home() {
         };
       });
     });
+
     const objDiv = document.getElementById("scroll");
     if (objDiv) {
       setTimeout(() => {
         objDiv.scrollTop = objDiv?.scrollHeight;
       }, 1000)
     }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
