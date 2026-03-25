@@ -18,6 +18,10 @@ export interface Message {
   author_uuid?: string;
 }
 
+type MessagesResponse = {
+  data: Message[];
+};
+
 export default function Home() {
   const queryClient = useQueryClient();
   const chatsService = new ChatsService();
@@ -26,7 +30,6 @@ export default function Home() {
   const params = useSearchParams();
   const uuid = params.get('uuid');
   const ref = useRef(false);
-  localStorage.setItem('@chat-app/chat', uuid?.toString() || '')
   const [message, setMessage] = useState('');
 
   const { data: user } = useQuery({
@@ -40,12 +43,8 @@ export default function Home() {
     if (!socket.connected) {
       socket.connect();
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    socket.on('receive_message', (newMessage: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      console.log('recebeu')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      queryClient.setQueryData(['messages', uuid], (oldData: any) => {
+    socket.on('receive_message', (newMessage: Message) => {
+      queryClient.setQueryData<MessagesResponse>(['messages', uuid], (oldData) => {
         if (!oldData) return { data: [newMessage] };
 
         return {
@@ -54,8 +53,6 @@ export default function Home() {
         };
       });
     });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
   const sendMessage = () => {
@@ -74,6 +71,7 @@ export default function Home() {
     }
     setMessage('');
   };
+
   const { data: chat, isFetching } = useQuery({
     queryKey: ['chat'],
     queryFn: () => chatsService.getChat(uuid?.toString() || '').then(r => r),
