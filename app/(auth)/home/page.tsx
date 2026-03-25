@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
+import socket from "../chat/socket";
 
 export default function Home() {
   const chatsService = new ChatsService()
@@ -39,7 +40,10 @@ export default function Home() {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data?.data?.data?.map((x: any) => (
             <Box key={x.uuid}>
-              <ButtonBase onClick={() => router.push('/chat?uuid=' + x?.uuid)}
+              <ButtonBase onClick={() => {
+                localStorage.setItem('@chat-app/chat', x?.uuid)
+                router.push('/chat?uuid=' + x?.uuid)
+              }}
                 sx={{
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'start', width: '100%',

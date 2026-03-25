@@ -20,7 +20,7 @@ export default function Persons() {
   }
 
   return (
-    <Box className="container">
+    <Box>
       <header style={{ background: '#1976d2', height: 55, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Typography sx={{ ml: 2, color: '#fff' }}>Meu Perfil</Typography>
         <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={logOut}>Sair</Button>
