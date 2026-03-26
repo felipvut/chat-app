@@ -35,7 +35,7 @@ export default function Home() {
   const [message, setMessage] = useState('');
 
   const { data: user } = useQuery({
-    queryKey: ['user', localStorage.getItem('@chat-app/token')],
+    queryKey: ['user', typeof window !== "undefined" && window?.localStorage .getItem('@chat-app/token')],
     queryFn: () => authService.me().then(r => r),
   })
 
@@ -59,7 +59,7 @@ export default function Home() {
       if (objDiv) {
         setTimeout(() => {
           objDiv.scrollTop = objDiv?.scrollHeight;
-        }, 1000)
+        }, 500)
       }
     });
 
@@ -71,7 +71,7 @@ export default function Home() {
     if (objDiv) {
       setTimeout(() => {
         objDiv.scrollTop = objDiv?.scrollHeight;
-      }, 1000)
+      }, 500)
     }
   }, [])
 

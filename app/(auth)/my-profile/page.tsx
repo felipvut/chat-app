@@ -27,7 +27,7 @@ export default function MyProfile() {
   const { mutate, isPending } = useSaveProfile();
 
   const { data: user, isFetching } = useQuery({
-    queryKey: ['user', localStorage.getItem('@chat-app/token')],
+    queryKey: ['user', typeof window !== "undefined" && window?.localStorage ?.getItem('@chat-app/token')],
     queryFn: () => authService.me().then(r => r),
   })
 

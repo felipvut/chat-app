@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (request) => {
 
-    const token = localStorage.getItem('@chat-app/token');
+    const token = typeof window !== "undefined" && window?.localStorage .getItem('@chat-app/token');
     if (token) {
       request.headers.Authorization = token;
     }
@@ -24,7 +24,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('@chat-app/token');
+      typeof window !== "undefined" && window?.localStorage .removeItem('@chat-app/token');
       window.dispatchEvent(new Event('unauthorized'));
     }
 

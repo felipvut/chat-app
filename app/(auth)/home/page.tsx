@@ -44,7 +44,7 @@ export default function Home() {
           data?.data?.data?.map((chat: Chat) => (
             <Box key={chat.uuid}>
               <ButtonBase onClick={() => {
-                localStorage.setItem('@chat-app/chat', chat?.uuid || '')
+                typeof window !== "undefined" && window?.localStorage?.setItem('@chat-app/chat', chat?.uuid || '')
                 router.push('/chat?uuid=' + chat?.uuid)
               }}
                 sx={{
@@ -53,10 +53,10 @@ export default function Home() {
                 }}>
                 <Box sx={{ display: 'flex', width: '100%', mb: 2, alignItems: 'center' }}>
                   <Box sx={{ mr: 2 }}>
-                    <Image 
-                    unoptimized={true}
-                    src={chat?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.files_uuid}` : '/user.png'}
-                    width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
+                    <Image
+                      unoptimized={true}
+                      src={chat?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.files_uuid}` : '/user.png'}
+                      width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
                   </Box>
                   <Box sx={{
                     display: 'flex', width: '100%', flexDirection: 'column',

@@ -8,6 +8,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Chat",
@@ -32,7 +33,9 @@ export default function RootLayout({
       <body>
         <AuthListener />
         <ReactQueryProvider>
-          {children}
+          <Suspense>
+            {children}
+          </Suspense>
         </ReactQueryProvider>
       </body>
     </html>

@@ -14,7 +14,7 @@ export const useNewChat = () => {
         mutationFn: (data: NewChat) => chatsService.newChat(data),
         onSuccess: (response) => {
             if (response?.data) {
-                localStorage.setItem('@chat-app/chat', response?.data?.uuid || '')
+                typeof window !== "undefined" && window?.localStorage .setItem('@chat-app/chat', response?.data?.uuid || '')
                 router.push('/chat?uuid=' + response?.data?.uuid)
             }
         },

@@ -14,7 +14,9 @@ export const useLogin = () => {
         mutationFn: (data: Login) => authService.login(data),
         onSuccess: (response) => {
             if (response?.token) {
-                localStorage.setItem('@chat-app/token', response?.token);
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('@chat-app/token', response?.token);
+                }
                 router.push('/home');
             }
         },

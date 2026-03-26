@@ -13,7 +13,7 @@ export default function Header({ callback }: any) {
     const authService = new AuthService();
 
     const { data: user } = useQuery({
-        queryKey: ['user', localStorage.getItem('@chat-app/token')],
+        queryKey: ['user', typeof window !== "undefined" && window?.localStorage .getItem('@chat-app/token')],
         queryFn: () => authService.me().then(r => r),
     })
 
@@ -23,7 +23,7 @@ export default function Header({ callback }: any) {
 
     const logOut = () => {
         callback?.()
-        localStorage.setItem('@chat-app/token', '');
+        typeof window !== "undefined" && window?.localStorage .setItem('@chat-app/token', '');
         router.push('/login');
     }
 

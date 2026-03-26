@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('@chat-app/token');
+    const token = typeof window !== "undefined" && window?.localStorage .getItem('@chat-app/token');
 
     if (token) {
       router.push('/home');
