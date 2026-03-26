@@ -66,6 +66,15 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
+  useEffect(() => {
+    const objDiv = document.getElementById("scroll");
+    if (objDiv) {
+      setTimeout(() => {
+        objDiv.scrollTop = objDiv?.scrollHeight;
+      }, 1000)
+    }
+  }, [])
+
   const sendMessage = () => {
     if (!message) return;
 
