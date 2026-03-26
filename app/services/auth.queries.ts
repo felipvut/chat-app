@@ -1,4 +1,5 @@
 import axiosInstance from "../lib/axios/auth.interceptor";
+import { ProfileFormData } from "../types/profile.schema";
 import { Login, Register } from "./types/auth";
 
 export class AuthService {
@@ -14,6 +15,11 @@ export class AuthService {
 
     async me() {
         const response = await axiosInstance.get('/me');
+        return response.data;
+    }
+
+    async saveProfile(data: ProfileFormData) {
+        const response = await axiosInstance.post('/save-profile', data);
         return response.data;
     }
 }

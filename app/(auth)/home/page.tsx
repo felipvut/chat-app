@@ -12,6 +12,7 @@ export interface Chat {
   uuid?: string;
   name?: string;
   last_message?: string;
+  files_uuid?: string;
 }
 
 export default function Home() {
@@ -52,7 +53,10 @@ export default function Home() {
                 }}>
                 <Box sx={{ display: 'flex', width: '100%', mb: 2, alignItems: 'center' }}>
                   <Box sx={{ mr: 2 }}>
-                    <Image src="/user.png" width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
+                    <Image 
+                    unoptimized={true}
+                    src={chat?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.files_uuid}` : '/user.png'}
+                    width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
                   </Box>
                   <Box sx={{
                     display: 'flex', width: '100%', flexDirection: 'column',

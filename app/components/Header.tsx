@@ -6,7 +6,8 @@ import { AuthService } from "../services/auth.queries";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
-export default function Header() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function Header({ callback }: any) {
     const router = useRouter()
     const [open, setOpen] = useState(false);
     const authService = new AuthService();
@@ -21,6 +22,7 @@ export default function Header() {
     };
 
     const logOut = () => {
+        callback?.()
         localStorage.setItem('@chat-app/token', '');
         router.push('/login');
     }
@@ -38,14 +40,17 @@ export default function Header() {
                     flexDirection: 'column', justifyContent: 'space-between'
                 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 2 }}>
-                        <Image src="/user.png" width={55} height={55} alt={"Usuário"}
+                        <Image src={user?.data?.person?.photo ? user?.data?.person?.photo : '/user.png'} width={55} height={55} alt={"Usuário"}
                             style={{ borderRadius: '50%', marginBottom: '15px' }} />
                         <Typography variant="subtitle1" sx={{ mb: 2 }}>{user?.data?.person?.name}</Typography>
                         <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
                     </Box>
                     <Box sx={{ pb: 2 }}>
                         <Button sx={{ mr: 1, mb: 2 }} color="primary" size="large" variant="contained" fullWidth
-                        onClick={() => router.push('/my-profile')}>Meu perfil</Button>
+                            onClick={() => {
+                                callback?.()
+                                router.push('/my-profile')
+                            }}>Meu perfil</Button>
                         <Button sx={{ mr: 1 }} color="error" size="large" variant="contained" fullWidth onClick={logOut}>Sair</Button>
                     </Box>
                 </Box>

@@ -10,6 +10,7 @@ import { AuthService } from "@/app/services/auth.queries";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../globals.css";
 import socket from "./socket";
+import Header from "@/app/components/Header";
 
 export interface Message {
   uuid?: string;
@@ -53,15 +54,15 @@ export default function Home() {
           data: [...oldData.data, newMessage],
         };
       });
+
+      const objDiv = document.getElementById("scroll");
+      if (objDiv) {
+        setTimeout(() => {
+          objDiv.scrollTop = objDiv?.scrollHeight;
+        }, 1000)
+      }
     });
 
-    const objDiv = document.getElementById("scroll");
-    if (objDiv) {
-      setTimeout(() => {
-        objDiv.scrollTop = objDiv?.scrollHeight;
-      }, 1000)
-    }
-    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
@@ -73,12 +74,6 @@ export default function Home() {
       chats_uuid: uuid?.toString(),
       created_at: new Date(),
     });
-    const objDiv = document.getElementById("scroll");
-    if (objDiv) {
-      setTimeout(() => {
-        objDiv.scrollTop = objDiv?.scrollHeight;
-      }, 1000)
-    }
     setMessage('');
   };
 
@@ -92,16 +87,15 @@ export default function Home() {
     queryFn: () => chatsService.getMessages(uuid?.toString() || '').then(r => r)
   })
 
-  const logOut = () => {
-    localStorage.setItem('@chat-app/token', '');
-    router.push('/login');
-  }
-
   const messages = messagesData?.data ? messagesData?.data : []
 
   return (
     <Box sx={{ maxHeight: '100vh' }}>
-      <header
+      <Header callback={() => {
+        socket.close()
+        socket.off('receive_message')
+      }} />
+      {/* <header
         style={{
           background: '#1976d2',
           height: 55, padding: 4,
@@ -114,7 +108,7 @@ export default function Home() {
           socket.off('receive_message')
           logOut()
         }}>Sair</Button>
-      </header>
+      </header> */}
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Box sx={{ display: 'flex', mb: 1.5 }}>
@@ -126,7 +120,10 @@ export default function Home() {
               <ArrowBackIcon sx={{ fontSize: '30px', color: '#5a5a5a' }}></ArrowBackIcon>
             </ButtonBase>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Image src="/user.png" width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
+              <Image
+                unoptimized={true}
+                src={chat?.data?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.data?.files_uuid}` : '/user.png'}
+                width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
               <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name}</Typography>
             </Box>
           </Box>
@@ -144,7 +141,7 @@ export default function Home() {
             ))
           }
         </Box>
-        <Box sx={{ display: 'flex', p: 1, width: '100%', position: 'fixed', left: 0, bottom: 0, zIndex: 999999999999, background: '#fff' }}>
+        <Box sx={{ display: 'flex', p: 1, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
           <TextField
             onKeyUp={(e) => {
               if (e.key === "Enter") {

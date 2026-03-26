@@ -1,14 +1,11 @@
 'use client'
 
-import { Badge, Box, Button, ButtonBase, Card, IconButton, TextField, Typography } from "@mui/material";
+import { Badge, Box, Button, ButtonBase, IconButton, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { PersonsService } from "@/app/services/persons.queries";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Image from "next/image";
 import Header from "@/app/components/Header";
-import { useNewChat } from "@/app/hooks/chat/chat.hook";
-import { NewChat } from "@/app/services/chats.queries";
 import { AuthService } from "@/app/services/auth.queries";
 import { ProfileFormData, profileSchema } from "@/app/types/profile.schema";
 import { useForm } from "react-hook-form";
@@ -16,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CreateIcon from '@mui/icons-material/Create';
 import "../../globals.css";
 import { useEffect } from "react";
+import { useSaveProfile } from "@/app/hooks/person/person.hook";
 
 export interface Person {
   uuid?: string;
@@ -26,27 +24,28 @@ export default function MyProfile() {
   const authService = new AuthService()
   const router = useRouter()
 
-  const { mutate, isPending } = useNewChat();
+  const { mutate, isPending } = useSaveProfile();
 
   const { data: user, isFetching } = useQuery({
     queryKey: ['user', localStorage.getItem('@chat-app/token')],
     queryFn: () => authService.me().then(r => r),
   })
 
-
-  const newChat = (data: NewChat) => {
-    mutate(data);
-  };
-
   const {
     register,
     setValue,
     watch,
+    getValues,
     handleSubmit,
     formState: { errors }
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema)
   });
+
+  const onSubmit = () => {
+    if (!watch('name')) return
+    mutate(getValues());
+  };
 
   const setPhoto = (files: FileList | null) => {
     if (!files) return;
@@ -66,6 +65,9 @@ export default function MyProfile() {
   useEffect(() => {
     if (user?.data?.person?.name) {
       setValue('name', user?.data?.person?.name)
+    }
+    if (user?.data?.person?.photo) {
+      setValue('photo', user?.data?.person?.photo)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
@@ -89,7 +91,7 @@ export default function MyProfile() {
           <>
             <Box
               component="form"
-              // onSubmit={handleSubmit(onSubmit)}
+              onSubmit={handleSubmit(onSubmit)}
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <IconButton onClick={() => {
@@ -97,7 +99,6 @@ export default function MyProfile() {
                   photo?.click?.()
                 }} sx={{ p: 0 }} >
                   <Badge
-
                     overlap="circular"
                     badgeContent={<CreateIcon sx={{ color: '#fff', fontSize: '17px' }}></CreateIcon>}
                     sx={{
