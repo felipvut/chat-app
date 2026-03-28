@@ -35,7 +35,7 @@ export default function Home() {
   const [message, setMessage] = useState('');
 
   const { data: user } = useQuery({
-    queryKey: ['user', typeof window !== "undefined" && window?.localStorage .getItem('@chat-app/token')],
+    queryKey: ['user', typeof window !== "undefined" && window?.localStorage.getItem('@chat-app/token')],
     queryFn: () => authService.me().then(r => r),
   })
 
@@ -128,8 +128,9 @@ export default function Home() {
             }}>
               <ArrowBackIcon sx={{ fontSize: '30px', color: '#5a5a5a' }}></ArrowBackIcon>
             </ButtonBase>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', minWidth: '55px' }}>
               <Image
+                className="img-photo"
                 unoptimized={true}
                 src={chat?.data?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.data?.files_uuid}` : '/user.png'}
                 width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />

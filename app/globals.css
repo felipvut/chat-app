@@ -26,3 +26,16 @@ body {
   bottom: 24px;
   right: 16px;
 }
+
+.img-photo {
+  width: 55px;
+  height: 55px;
+  object-fit: cover;
+}
+
+.last-message {
+  overflow: hidden;
+  height: 25px;
+  text-align: left;
+  text-overflow: ellipsis;
+}

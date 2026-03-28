@@ -7,6 +7,7 @@ import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
 import { Add } from '@mui/icons-material';
 import Header from "@/app/components/Header";
+import "../../globals.css";
 
 export interface Chat {
   uuid?: string;
@@ -52,18 +53,19 @@ export default function Home() {
                   alignItems: 'start', width: '100%',
                 }}>
                 <Box sx={{ display: 'flex', width: '100%', mb: 2, alignItems: 'center' }}>
-                  <Box sx={{ mr: 2 }}>
+                  <Box sx={{ mr: 2, minWidth: '55px' }}>
                     <Image
+                      className="img-photo"
                       unoptimized={true}
                       src={chat?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.files_uuid}` : '/user.png'}
                       width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
                   </Box>
                   <Box sx={{
-                    display: 'flex', width: '100%', flexDirection: 'column',
+                    display: 'flex', flexDirection: 'column',
                     alignItems: 'start'
                   }}>
                     <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat.name}</Typography>
-                    <Typography color="textSecondary" sx={{ fontSize: 17, mb: 1, p: 0, m: 0 }}>{chat?.last_message}</Typography>
+                    <Typography className="last-message" color="textSecondary" sx={{ fontSize: 17, mb: 1, p: 0, m: 0 }}>{chat?.last_message}</Typography>
                   </Box>
                 </Box>
               </ButtonBase>
