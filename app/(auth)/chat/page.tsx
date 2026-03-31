@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, ButtonBase, Chip, Divider, TextField, Typography } from "@mui/material";
+import { Box, Button, ButtonBase, Chip, CircularProgress, Divider, TextField, Typography } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
@@ -86,8 +86,8 @@ export default function Home() {
     setMessage('');
   };
 
-  const { data: chat, isFetching } = useQuery({
-    queryKey: ['chat'],
+  const { data: chat, isLoading } = useQuery({
+    queryKey: ['chat' + uuid?.toString()],
     queryFn: () => chatsService.getChat(uuid?.toString() || '').then(r => r),
   })
 
@@ -104,20 +104,6 @@ export default function Home() {
         socket.close()
         socket.off('receive_message')
       }} />
-      {/* <header
-        style={{
-          background: '#1976d2',
-          height: 55, padding: 4,
-          display: "flex", alignItems: "center",
-          justifyContent: "space-between"
-        }}>
-        <Typography sx={{ ml: 2, color: '#fff' }}>Meu Perfil</Typography>
-        <Button sx={{ mr: 1 }} color="error" variant="contained" onClick={() => {
-          socket.close()
-          socket.off('receive_message')
-          logOut()
-        }}>Sair</Button>
-      </header> */}
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Box sx={{ display: 'flex', mb: 1.5 }}>
@@ -134,23 +120,30 @@ export default function Home() {
                 unoptimized={true}
                 src={chat?.data?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.data?.files_uuid}` : '/user.png'}
                 width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
-              <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name}</Typography>
+              <Typography color="textSecondary"  sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name?.split(' ')?.[0]}</Typography>
             </Box>
           </Box>
           <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
-
         </Box>
         {
-          isFetching &&
-          <Typography color="textSecondary" sx={{ textAlign: 'center', mt: 3 }}>Carregando...</Typography>
+          isLoading &&
+          <Box sx={{
+            display: 'flex', justifyContent: 'center', alignItems: 'center',
+            width: '100%', height: 'calc(100vh - 200px)'
+          }}>
+            <CircularProgress color="primary"></CircularProgress>
+          </Box>
         }
-        <Box id="scroll" className="box-chat">
-          {
-            messages?.map((message: Message) => (
-              <MessageComponent key={message.uuid} message={message} user={user} />
-            ))
-          }
-        </Box>
+        {
+          !isLoading &&
+          <Box id="scroll" className="box-chat">
+            {
+              messages?.map((message: Message) => (
+                <MessageComponent key={message.uuid} message={message} user={user} />
+              ))
+            }
+          </Box>
+        }
         <Box sx={{ display: 'flex', p: 1, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
           <TextField
             onKeyUp={(e) => {

@@ -18,7 +18,7 @@ body {
 .box-chat {
   height: calc(100vh - 68px - 55px - 16px - 90px);
   margin-bottom: 56px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .add-contact {
@@ -33,7 +33,7 @@ body {
   object-fit: cover;
 }
 
-.last-message {
+.overflow-text {
   overflow: hidden;
   height: 25px;
   text-align: left;

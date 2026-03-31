@@ -1,0 +1,1 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,31713,t=>{"use strict";var e=t.i(71645),o=t.i(18566);function u(){let t=(0,o.useRouter)();return(0,e.useEffect)(()=>{window?.localStorage.getItem("@chat-app/token")?t.push("/home"):t.push("/login")},[t]),null}t.s(["default",()=>u])}]);

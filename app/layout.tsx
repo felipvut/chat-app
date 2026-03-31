@@ -1,5 +1,4 @@
 
-
 import type { Metadata } from "next";
 import "./globals.css";
 import ReactQueryProvider from "./QueryClientProvider";
@@ -20,6 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="pt-br">
       <head>
