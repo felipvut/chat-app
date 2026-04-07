@@ -5,6 +5,7 @@ import { useState } from "react";
 import { AuthService } from "../services/auth.queries";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { ChatBubbleOutline } from "@mui/icons-material";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Header({ callback }: any) {
@@ -13,7 +14,7 @@ export default function Header({ callback }: any) {
     const authService = new AuthService();
 
     const { data: user } = useQuery({
-        queryKey: ['user', typeof window !== "undefined" && window?.localStorage .getItem('@chat-app/token')],
+        queryKey: ['user', typeof window !== "undefined" && window?.localStorage.getItem('@chat-app/token')],
         queryFn: () => authService.me().then(r => r),
     })
 
@@ -23,14 +24,23 @@ export default function Header({ callback }: any) {
 
     const logOut = () => {
         callback?.()
-        typeof window !== "undefined" && window?.localStorage .setItem('@chat-app/token', '');
+        typeof window !== "undefined" && window?.localStorage.setItem('@chat-app/token', '');
         router.push('/login');
     }
 
     return (
-        <header style={{ background: '#1976d2', height: 55, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Typography sx={{ ml: 2, color: '#fff' }}>Chat App</Typography>
-            <ButtonBase sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
+        <header style={{ background: 'linear-gradient(135deg, #0d47a1 0%, #1976d2 100%)', height: 65, padding: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Box
+                sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+                <Box sx={{
+                    color: '#fff', background: '#1c6dbd', width: 45, height: 45,
+                    borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto'
+                }}>
+                    <ChatBubbleOutline sx={{ fontSize: 28 }} />
+                </Box>
+                <Typography variant="h6" sx={{ ml: 2, color: '#fff', fontWeight: 700 }}>Chat App</Typography>
+            </Box>
+            <ButtonBase sx={{ mr: 2, background: '#227eda', p: 1, borderRadius: 4 }} onClick={toggleDrawer(true)}>
                 <MenuIcon sx={{ fontSize: '30px', color: '#fff' }}></MenuIcon>
             </ButtonBase>
             <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
