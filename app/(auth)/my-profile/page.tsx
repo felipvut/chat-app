@@ -1,6 +1,6 @@
 'use client'
 
-import { Badge, Box, Button, ButtonBase, IconButton, TextField, Typography } from "@mui/material";
+import { Badge, Box, Button, ButtonBase, Fab, IconButton, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -27,7 +27,7 @@ export default function MyProfile() {
   const { mutate, isPending } = useSaveProfile();
 
   const { data: user, isFetching } = useQuery({
-    queryKey: ['user', typeof window !== "undefined" && window?.localStorage ?.getItem('@chat-app/token')],
+    queryKey: ['user', typeof window !== "undefined" && window?.localStorage?.getItem('@chat-app/token')],
     queryFn: () => authService.me().then(r => r),
   })
 
@@ -77,10 +77,10 @@ export default function MyProfile() {
       <Header />
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <ButtonBase sx={{ mr: 2 }} onClick={() => router.push('/home')}>
-            <ArrowBackIcon sx={{ fontSize: '30px', color: '#5a5a5a' }}></ArrowBackIcon>
-          </ButtonBase>
-          <Typography variant="h4" color="primary">Meu perfil</Typography>
+          <Fab size="small" sx={{ mr: 2, color: 'blue', background: 'lightblue' }} onClick={() => router.push('/home')}>
+            <ArrowBackIcon sx={{ fontSize: '30px', color: 'primary' }}></ArrowBackIcon>
+          </Fab>
+          <Typography variant="h5" color="textPrimary" sx={{ fontWeight: 600 }}>Meu perfil</Typography>
         </Box>
         {
           isFetching &&

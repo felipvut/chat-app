@@ -1,17 +1,17 @@
-import { Box, Button, ButtonBase, Divider, Drawer, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { Avatar, Box, Button, ButtonBase, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import { usePathname, useRouter } from "next/navigation";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from "react";
 import { AuthService } from "../services/auth.queries";
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import { ChatBubbleOutline } from "@mui/icons-material";
+import { ChatBubbleOutline, Logout, Person } from "@mui/icons-material";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Header({ callback }: any) {
     const router = useRouter()
     const [open, setOpen] = useState(false);
     const authService = new AuthService();
+    const pathname = usePathname();
 
     const { data: user } = useQuery({
         queryKey: ['user', typeof window !== "undefined" && window?.localStorage.getItem('@chat-app/token')],
@@ -43,27 +43,68 @@ export default function Header({ callback }: any) {
             <ButtonBase sx={{ mr: 2, background: '#227eda', p: 1, borderRadius: 4 }} onClick={toggleDrawer(true)}>
                 <MenuIcon sx={{ fontSize: '30px', color: '#fff' }}></MenuIcon>
             </ButtonBase>
-            <Drawer anchor="right" open={open} onClose={toggleDrawer(false)} sx={{
-                borderRadius: '12px',
-            }}>
-                <Box sx={{
-                    height: '100vh',
-                    width: '280px', p: 1, display: 'flex',
-                    flexDirection: 'column', justifyContent: 'space-between'
-                }}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 2 }}>
-                        <Image src={user?.data?.person?.photo ? user?.data?.person?.photo : '/user.png'} width={55} height={55} alt={"Usuário"}
-                            style={{ borderRadius: '50%', marginBottom: '15px' }} />
-                        <Typography variant="subtitle1" sx={{ mb: 2 }}>{user?.data?.person?.name}</Typography>
-                        <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
+  <Drawer
+                anchor="right"
+                open={open}
+                onClose={toggleDrawer(false)}
+                PaperProps={{
+                    sx: { width: 300, borderTopLeftRadius: 16, borderBottomLeftRadius: 16 }
+                }}
+            >
+                <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{
+                        p: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        bgcolor: 'background.default',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider'
+                    }}>
+                        <Avatar
+                            src={user?.data?.person?.photo ? user?.data?.person?.photo : '/user.png'}
+                            alt={user?.data?.person?.name || "Usuário"}
+                            sx={{ width: 88, height: 88, mb: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                        />
+                        <Typography variant="h6" sx={{ fontWeight: 600, textAlign: 'center' }}>
+                            {user?.data?.person?.name || 'Carregando...'}
+                        </Typography>
                     </Box>
-                    <Box sx={{ pb: 2 }}>
-                        <Button sx={{ mr: 1, mb: 2 }} color="primary" size="large" variant="contained" fullWidth
-                            onClick={() => {
-                                callback?.()
-                                router.push('/my-profile')
-                            }}>Meu perfil</Button>
-                        <Button sx={{ mr: 1 }} color="error" size="large" variant="contained" fullWidth onClick={logOut}>Sair</Button>
+
+                    <Box sx={{ flexGrow: 1, py: 2, px: 2 }}>
+                        <List>
+                            <ListItemButton
+                                sx={{ borderRadius: 2, mb: 1, background: pathname?.startsWith('/my-profile') ? 'rgba(25, 118, 210, 0.1)' : '' }}
+                                onClick={() => {
+                                    callback?.()
+                                    setOpen(false)
+                                    router.push('/my-profile')
+                                }}
+                            >
+                                <ListItemIcon sx={{ minWidth: 40 }}>
+                                    <Person color="primary" />
+                                </ListItemIcon>
+                                <ListItemText primary="Meu perfil" primaryTypographyProps={{ fontWeight: 500 }} />
+                            </ListItemButton>
+                        </List>
+                    </Box>
+
+                    <Box sx={{ p: 3 }}>
+                        <ListItemButton
+                            sx={{
+                                borderRadius: 2,
+                                bgcolor: '#ffebee',
+                                color: 'error.main',
+                                transition: 'all 0.2s',
+                                '&:hover': { bgcolor: 'error.main', color: 'error.contrastText' }
+                            }}
+                            onClick={logOut}
+                        >
+                            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                                <Logout />
+                            </ListItemIcon>
+                            <ListItemText primary="Sair da Conta" primaryTypographyProps={{ fontWeight: 600 }} />
+                        </ListItemButton>
                     </Box>
                 </Box>
             </Drawer>
