@@ -1,6 +1,6 @@
 'use client'
 
-import { Badge, Box, Button, ButtonBase, Fab, IconButton, TextField, Typography } from "@mui/material";
+import { alpha, Badge, Box, Button, IconButton, TextField, Typography, useTheme } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -23,6 +23,7 @@ export interface Person {
 export default function MyProfile() {
   const authService = new AuthService()
   const router = useRouter()
+  const theme = useTheme();
 
   const { mutate, isPending } = useSaveProfile();
 
@@ -77,9 +78,19 @@ export default function MyProfile() {
       <Header />
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Fab size="small" sx={{ mr: 2, color: 'blue', background: 'lightblue' }} onClick={() => router.push('/home')}>
-            <ArrowBackIcon sx={{ fontSize: '30px', color: 'primary' }}></ArrowBackIcon>
-          </Fab>
+          <IconButton
+            onClick={() => router.push('/home')}
+            sx={{
+              mr: 2,
+              bgcolor: alpha(theme.palette.primary.main, 0.1),
+              color: 'primary.main',
+              '&:hover': {
+                bgcolor: alpha(theme.palette.primary.main, 0.2),
+              }
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
           <Typography variant="h5" color="textPrimary" sx={{ fontWeight: 600 }}>Meu perfil</Typography>
         </Box>
         {
