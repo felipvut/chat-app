@@ -27,6 +27,7 @@ export default function Home() {
     queryKey: ['users'],
     queryFn: () => chatsService.myChats().then(r => r),
   })
+  
   useEffect(() => {
     if (data?.data?.data) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
