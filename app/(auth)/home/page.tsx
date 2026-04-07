@@ -30,13 +30,11 @@ export default function Home() {
       <Header />
       <Box sx={{ p: 2 }}>
         <Box className="add-contact">
-          <Fab sx={{ mb: 2 }} variant="extended" color="primary" onClick={() => router.push('/persons')}>
+          <Fab sx={{ mb: 2, background: '#0d47a1' }} variant="circular" color="primary" onClick={() => router.push('/persons')}>
             <Add></Add>
-            <Typography variant="subtitle1">Adicionar Chat</Typography>
           </Fab>
         </Box>
-
-        <Typography variant="h4"  sx={{ mb: 4, fontWeight: 500 }}>Contatos</Typography>
+        <Typography variant="h4" sx={{ mb: 4, fontWeight: 500 }}>Contatos</Typography>
         {
           isLoading &&
           <Box sx={{
@@ -51,34 +49,33 @@ export default function Home() {
           <>
             {
               data?.data?.data?.map((chat: Chat) => (
-                <Box key={chat.uuid}>
-                  <ButtonBase onClick={() => {
-                    typeof window !== "undefined" && window?.localStorage?.setItem('@chat-app/chat', chat?.uuid || '')
-                    router.push('/chat?uuid=' + chat?.uuid)
-                  }}
-                    sx={{
-                      display: 'flex', flexDirection: 'column',
-                      alignItems: 'start', width: '100%',
-                    }}>
-                    <Box sx={{ display: 'flex', width: '100%', mb: 2, alignItems: 'center' }}>
-                      <Box sx={{ mr: 2, minWidth: '55px' }}>
-                        <Image
-                          className="img-photo"
-                          unoptimized={true}
-                          src={chat?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.files_uuid}` : '/user.png'}
-                          width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
-                      </Box>
-                      <Box sx={{
-                        display: 'flex', flexDirection: 'column',
-                        alignItems: 'start'
-                      }}>
-                        <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.name?.split(' ')?.[0]}</Typography>
-                        <Typography className="overflow-text" color="textSecondary" sx={{ fontSize: 17, mb: 1, p: 0, m: 0 }}>{chat?.last_message}</Typography>
-                      </Box>
+                <ButtonBase key={chat?.uuid} onClick={() => {
+                  typeof window !== "undefined" && window?.localStorage?.setItem('@chat-app/chat', chat?.uuid || '')
+                  router.push('/chat?uuid=' + chat?.uuid)
+                }}
+                  sx={{
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'start', width: '100%',
+                    border: '1px solid #dbdbdb', borderRadius: 2, p: 1.6, mb: 2
+                  }}>
+                  <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                    <Box sx={{ mr: 1.5, minWidth: '55px' }}>
+                      <Image
+                        className="img-photo"
+                        unoptimized={true}
+                        src={chat?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.files_uuid}` : '/user.png'}
+                        width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
                     </Box>
-                  </ButtonBase>
-                  <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
-                </Box>
+                    <Box sx={{
+                      display: 'flex', flexDirection: 'column',
+                      alignItems: 'start'
+                    }}>
+                      <Typography color="textPrimary" sx={{ fontSize: 20, mb: 0.3, fontWeight: 700 }}>{chat?.name?.split(' ')?.[0]}</Typography>
+                      <Typography className="overflow-text" color="textSecondary" sx={{ fontSize: 17, p: 0, m: 0 }}>{chat?.last_message}</Typography>
+                    </Box>
+                  </Box>
+                </ButtonBase>
+
               ))
             }
           </>
