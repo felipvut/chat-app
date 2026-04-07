@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Snackbar, SnackbarContent, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CircularProgress, IconButton, Link, Snackbar, SnackbarContent, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
@@ -8,9 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useRegister } from "@/app/hooks/auth/auth.hook";
 import { RegisterFormData, registerSchema } from "@/app/types/register.schema";
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import { LockOutline, PersonOutline, Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function Home() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, isPending } = useRegister();
   const [open, setOpen] = useState(false);
@@ -37,22 +41,60 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
-      <Box className="w-80"
+      <Card
         component="form"
         onSubmit={handleSubmit(onSubmit)}
-        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Typography variant="h4" color="primary">Criar conta</Typography>
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.7, width: '100%', maxWidth: 400, p: 4,
+          borderRadius: 4,
+          textAlign: 'center'
+        }}>
+        <Box>
+          <Box sx={{
+            mb: 1,
+            color: '#fff', background: '#1d80e4', width: 52, height: 52,
+            borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto'
+          }}>
+            <ChatBubbleOutlineIcon sx={{ fontSize: 30 }} />
+          </Box>
+        </Box>
+        <Typography variant="h5" color="textPrimary" sx={{ m: 0, p: 0 }}>
+          Criar nova conta
+        </Typography>
+        <Typography variant="body2" color="textDisabled" sx={{ mb: 2 }}>
+          Junte-se a nós e comece a conversar com seus amigos agora mesmo.
+        </Typography>
         <TextField
           label="Nome Completo"
           {...register('name')}
           error={!!errors.name}
           helperText={errors.name?.message}
+          InputProps={{
+            startAdornment: (
+              <PersonOutline color="action" sx={{ mr: 1 }} />
+            ),
+            sx: {
+              borderRadius: 2,
+              mb: 1
+            }
+          }}
         />
         <TextField
           label="Email"
           {...register('email')}
           error={!!errors.email}
           helperText={errors.email?.message}
+          InputProps={{
+            startAdornment: (
+              <MailOutlineIcon color="action" sx={{ mr: 1 }} />
+            ),
+            sx: {
+              borderRadius: 2,
+              mb: 1
+            }
+          }}
         />
         <TextField
           label="Senha"
@@ -60,6 +102,22 @@ export default function Home() {
           {...register('password')}
           error={!!errors.password}
           helperText={errors.password?.message}
+          InputProps={{
+            startAdornment: (
+              <LockOutline color="action" sx={{ mr: 1 }} />
+            ),
+            endAdornment: (
+              <IconButton sx={{ m: 0, p: 0.3, ml: 1 }} onClick={() => setShowPassword(!showPassword)}>
+                {
+                  showPassword ? <VisibilityOff color="action" /> : <Visibility color="action" />
+                }
+              </IconButton>
+            ),
+            sx: {
+              borderRadius: 2,
+              mb: 1
+            }
+          }}
         />
         <TextField
           label="Confirmar Senha"
@@ -67,16 +125,39 @@ export default function Home() {
           {...register('confirm_password')}
           error={!!errors.confirm_password}
           helperText={errors.confirm_password?.message}
+          InputProps={{
+            startAdornment: (
+              <LockOutline color="action" sx={{ mr: 1 }} />
+            ),
+            endAdornment: (
+              <IconButton sx={{ m: 0, p: 0.3, ml: 1 }} onClick={() => setShowPassword(!showPassword)}>
+                {
+                  showPassword ? <VisibilityOff color="action" /> : <Visibility color="action" />
+                }
+              </IconButton>
+            ),
+            sx: {
+              borderRadius: 2,
+              mb: 1
+            }
+          }}
         />
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Button variant="contained"
             type="submit"
             color="primary"
+            size="large"
             disabled={isPending}
-            fullWidth>Criar Conta</Button>
-          <Button variant="contained" color="success" fullWidth onClick={() => { router.push('/login') }}>Login</Button>
+            sx={{ mb: 3, borderRadius: 2, textTransform: 'none', boxShadow: 3 }}
+            fullWidth>
+            {isPending ? <CircularProgress color="inherit" size={25} /> : 'Criar Conta'}
+          </Button>
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+            Já tem uma conta?
+            <Link href="/login" style={{ color: '#1d80e4', textDecoration: 'none', marginLeft: 4 }}>Faça o login</Link>
+          </Typography>
         </Box>
-      </Box>
+      </Card>
       <Snackbar
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
         open={open}

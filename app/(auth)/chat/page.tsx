@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, ButtonBase, Chip, CircularProgress, Divider, TextField, Typography } from "@mui/material";
+import { alpha, Box, Button, Chip, CircularProgress, Divider, Fab, IconButton, TextField, Typography, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
@@ -11,6 +11,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../globals.css";
 import socket from "./socket";
 import Header from "@/app/components/Header";
+import { Send } from "@mui/icons-material";
 
 export interface Message {
   uuid?: string;
@@ -33,6 +34,7 @@ export default function Home() {
   const uuid = params.get('uuid');
   const ref = useRef(false);
   const [message, setMessage] = useState('');
+  const theme = useTheme();
 
   const { data: user } = useQuery({
     queryKey: ['user', typeof window !== "undefined" && window?.localStorage.getItem('@chat-app/token')],
@@ -104,26 +106,49 @@ export default function Home() {
         socket.close()
         socket.off('receive_message')
       }} />
-      <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Box sx={{ display: 'flex', mb: 1.5 }}>
-            <ButtonBase sx={{ mr: 3 }} onClick={() => {
-              socket.close()
-              socket.off('receive_message')
-              router.back()
-            }}>
-              <ArrowBackIcon sx={{ fontSize: '30px', color: '#5a5a5a' }}></ArrowBackIcon>
-            </ButtonBase>
-            <Box sx={{ display: 'flex', alignItems: 'center', minWidth: '55px' }}>
-              <Image
-                className="img-photo"
-                unoptimized={true}
-                src={chat?.data?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.data?.files_uuid}` : '/user.png'}
-                width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
-              <Typography color="textSecondary"  sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name?.split(' ')?.[0]}</Typography>
-            </Box>
+      <Box>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column', justifyContent: 'center',
+          borderBottom: '1px solid #a9a9a9',
+          p: 2,
+          height: 88
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              onClick={() => {
+                socket.close()
+                socket.off('receive_message')
+                router.back()
+              }}
+              sx={{
+                mr: 2,
+                width: 36,
+                height: 36,
+                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                color: 'primary.main',
+                '&:hover': {
+                  bgcolor: alpha(theme.palette.primary.main, 0.2),
+                }
+              }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            {
+              isLoading ? (
+                <CircularProgress color="primary" size={24} sx={{ mr: 2 }}></CircularProgress>
+              ) : (
+                <Box sx={{ display: 'flex', alignItems: 'center', minWidth: '55px' }}>
+                  <Image
+                    className="img-photo"
+                    unoptimized={true}
+                    src={chat?.data?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.data?.files_uuid}` : '/user.png'}
+                    width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
+                  <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name?.split(' ')?.[0]}</Typography>
+                </Box>
+              )
+            }
           </Box>
-          <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
         </Box>
         {
           isLoading &&
@@ -136,7 +161,7 @@ export default function Home() {
         }
         {
           !isLoading &&
-          <Box id="scroll" className="box-chat">
+          <Box id="scroll" className="box-chat" sx={{ p: 2 }}>
             {
               messages?.map((message: Message) => (
                 <MessageComponent key={message.uuid} message={message} user={user} />
@@ -144,7 +169,7 @@ export default function Home() {
             }
           </Box>
         }
-        <Box sx={{ display: 'flex', p: 1, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
+        <Box sx={{ display: 'flex', p: 2, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
           <TextField
             onKeyUp={(e) => {
               if (e.key === "Enter") {
@@ -153,8 +178,17 @@ export default function Home() {
             }}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            name="message" placeholder="Digite sua mensagem..." fullWidth />
-          <Button sx={{ ml: 2 }} onClick={sendMessage}>Enviar</Button>
+            fullWidth
+            name="message" placeholder="Digite sua mensagem..."
+            InputProps={{
+              sx: {
+                borderRadius: 4,
+              }
+            }} />
+          <Fab variant="circular" sx={{ ml: 2, minWidth: 56, minHeight: 56 }} color="primary" onClick={sendMessage}>
+            <Send />
+          </Fab>
+          {/* <Button sx={{ ml: 2 }} onClick={sendMessage}>Enviar</Button> */}
         </Box>
       </Box>
     </Box >
@@ -178,6 +212,8 @@ export function MessageComponent({ message, user }: Props) {
           fontSize: 15,
           padding: 1,
           textAlign: 'justify',
+          borderBottomLeftRadius: message?.author_uuid == user?.data?.person?.uuid ? '16px' : '0px',
+          borderBottomRightRadius: message?.author_uuid == user?.data?.person?.uuid ? '0px' : '16px',
           '& .MuiChip-label': {
             display: 'block',
             whiteSpace: 'normal',

@@ -1,6 +1,6 @@
 'use client'
 
-import { Badge, Box, Button, ButtonBase, IconButton, TextField, Typography } from "@mui/material";
+import { alpha, Badge, Box, Button, IconButton, TextField, Typography, useTheme } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -23,11 +23,12 @@ export interface Person {
 export default function MyProfile() {
   const authService = new AuthService()
   const router = useRouter()
+  const theme = useTheme();
 
   const { mutate, isPending } = useSaveProfile();
 
   const { data: user, isFetching } = useQuery({
-    queryKey: ['user', typeof window !== "undefined" && window?.localStorage ?.getItem('@chat-app/token')],
+    queryKey: ['user', typeof window !== "undefined" && window?.localStorage?.getItem('@chat-app/token')],
     queryFn: () => authService.me().then(r => r),
   })
 
@@ -77,10 +78,20 @@ export default function MyProfile() {
       <Header />
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <ButtonBase sx={{ mr: 2 }} onClick={() => router.push('/home')}>
-            <ArrowBackIcon sx={{ fontSize: '30px', color: '#5a5a5a' }}></ArrowBackIcon>
-          </ButtonBase>
-          <Typography variant="h4" color="primary">Meu perfil</Typography>
+          <IconButton
+            onClick={() => router.push('/home')}
+            sx={{
+              mr: 2,
+              bgcolor: alpha(theme.palette.primary.main, 0.1),
+              color: 'primary.main',
+              '&:hover': {
+                bgcolor: alpha(theme.palette.primary.main, 0.2),
+              }
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h5" color="textPrimary" sx={{ fontWeight: 600 }}>Meu perfil</Typography>
         </Box>
         {
           isFetching &&
@@ -144,6 +155,7 @@ export default function MyProfile() {
                   type="submit"
                   color="primary"
                   size="large"
+                  sx={{ borderRadius: 4 }}
                   disabled={isPending}
                   fullWidth>Salvar</Button>
               </Box>

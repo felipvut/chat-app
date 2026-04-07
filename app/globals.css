@@ -17,13 +17,14 @@ body {
 
 .box-chat {
   height: calc(100vh - 68px - 55px - 16px - 90px);
-  margin-bottom: 56px;
   overflow-y: auto;
+  background-color: #eaf4fc;
+  background-image: radial-gradient(circle at center, #f5f7fa 0%, #eaf4fc 100%);
 }
 
 .add-contact {
   position: fixed;
-  bottom: 24px;
+  bottom: 48px;
   right: 16px;
 }
 
