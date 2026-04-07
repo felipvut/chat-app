@@ -106,9 +106,15 @@ export default function Home() {
         socket.close()
         socket.off('receive_message')
       }} />
-      <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+      <Box>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column', justifyContent: 'center',
+          borderBottom: '1px solid #a9a9a9',
+          p: 2,
+          height: 88
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton
               onClick={() => {
                 socket.close()
@@ -143,7 +149,6 @@ export default function Home() {
               )
             }
           </Box>
-          <Divider color="#f8f8f8" sx={{ width: '100%', mb: 2 }} />
         </Box>
         {
           isLoading &&
@@ -156,7 +161,7 @@ export default function Home() {
         }
         {
           !isLoading &&
-          <Box id="scroll" className="box-chat">
+          <Box id="scroll" className="box-chat" sx={{ p: 2 }}>
             {
               messages?.map((message: Message) => (
                 <MessageComponent key={message.uuid} message={message} user={user} />
@@ -207,6 +212,8 @@ export function MessageComponent({ message, user }: Props) {
           fontSize: 15,
           padding: 1,
           textAlign: 'justify',
+          borderBottomLeftRadius: message?.author_uuid == user?.data?.person?.uuid ? '16px' : '0px',
+          borderBottomRightRadius: message?.author_uuid == user?.data?.person?.uuid ? '0px' : '16px',
           '& .MuiChip-label': {
             display: 'block',
             whiteSpace: 'normal',

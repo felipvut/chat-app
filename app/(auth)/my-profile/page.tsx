@@ -155,6 +155,7 @@ export default function MyProfile() {
                   type="submit"
                   color="primary"
                   size="large"
+                  sx={{ borderRadius: 4 }}
                   disabled={isPending}
                   fullWidth>Salvar</Button>
               </Box>
