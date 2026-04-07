@@ -43,7 +43,9 @@ export default function Header({ callback }: any) {
             <ButtonBase sx={{ mr: 2, background: '#227eda', p: 1, borderRadius: 4 }} onClick={toggleDrawer(true)}>
                 <MenuIcon sx={{ fontSize: '30px', color: '#fff' }}></MenuIcon>
             </ButtonBase>
-            <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+            <Drawer anchor="right" open={open} onClose={toggleDrawer(false)} sx={{
+                borderRadius: '12px',
+            }}>
                 <Box sx={{
                     height: '100vh',
                     width: '280px', p: 1, display: 'flex',
