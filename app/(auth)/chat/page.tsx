@@ -161,7 +161,12 @@ export default function Home() {
                     unoptimized={true}
                     src={chat?.data?.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${chat?.data?.files_uuid}` : '/user.png'}
                     width={55} height={55} alt={"Usuário"} style={{ marginRight: 15, borderRadius: '50%' }} />
-                  <Typography color="textSecondary" sx={{ fontSize: 20, mb: 0.3 }}>{chat?.data?.name?.split(' ')?.[0]}</Typography>
+                  <Typography color="textSecondary" sx={{
+                    fontSize: 20, mb: 0.3,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>{chat?.data?.name}</Typography>
                 </Box>
               )
             }

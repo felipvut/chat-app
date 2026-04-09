@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, ButtonBase, CircularProgress, Fab, TextField, Typography } from "@mui/material";
+import { Box, ButtonBase, CircularProgress, Fab, ListItemText, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
@@ -27,7 +27,7 @@ export default function Home() {
     queryKey: ['users'],
     queryFn: () => chatsService.myChats().then(r => r),
   })
-  
+
   useEffect(() => {
     if (data?.data?.data) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -102,13 +102,27 @@ export default function Home() {
                         width={55} height={55} alt={"Usuário"} style={{ marginRight: 3, borderRadius: '50%' }} />
                     </Box>
                     <Box sx={{
-                      display: 'flex', flexDirection: 'column',
-                      alignItems: 'start'
+                      display: 'block', flexDirection: 'column',
+                      alignItems: 'start',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      minWidth: 0
                     }}>
                       <Typography
                         color="textPrimary"
-                        sx={{ fontSize: 20, mb: 0.3, fontWeight: 700 }}>{chat?.name?.split(' ')?.[0]}</Typography>
-                      <Typography className="overflow-text" color="textSecondary" sx={{ fontSize: 17, p: 0, m: 0 }}>{chat?.last_message}</Typography>
+                        sx={{
+                          fontSize: 20, mb: 0.3, fontWeight: 700,
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }}>{chat?.name}</Typography>
+                      <Typography className="overflow-text" color="textSecondary" sx={{
+                        fontSize: 17, p: 0, m: 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>{chat?.last_message}</Typography>
                     </Box>
                   </Box>
                 </ButtonBase>
