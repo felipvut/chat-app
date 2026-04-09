@@ -103,19 +103,25 @@ export default function Home() {
     queryFn: () => chatsService.getChat(uuid?.toString() || '').then(r => r),
   })
 
-  const { data: messagesData, isLoading: isMessagesLoading } = useQuery({
+  const { data: messagesData } = useQuery({
     queryKey: ['messages', uuid],
     queryFn: () => chatsService.getMessages(uuid?.toString() || '').then(r => r)
   })
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const messages = messagesData?.data ? messagesData?.data : []
 
-  useEffect(() => {
-    const objDiv = document.getElementById("scroll");
-    if (objDiv) {
-      objDiv.scrollTop = objDiv?.scrollHeight;
-    }
-  }, [isMessagesLoading])
+  useLayoutEffect(() => {
+    const timeout = setTimeout(() => {
+      const objDiv = document.getElementById("scroll");
+      console.log(objDiv)
+      if (objDiv) {
+        objDiv.scrollTop = objDiv.scrollHeight;
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [messages]);
 
   return (
     <Box sx={{ maxHeight: '100vh' }}>
@@ -181,16 +187,18 @@ export default function Home() {
             <CircularProgress color="primary"></CircularProgress>
           </Box>
         }
-        {
-          !isLoading &&
-          <Box id="scroll" className="box-chat" sx={{ p: 2 }}>
-            {
-              messages?.map((message: Message) => (
-                <MessageComponent key={message.uuid} message={message} user={user} />
-              ))
-            }
-          </Box>
-        }
+        <Box id="scroll" className="box-chat" sx={{ p: 2 }}>
+          {
+            !isLoading &&
+            <>
+              {
+                messages?.map((message: Message) => (
+                  <MessageComponent key={message.uuid} message={message} user={user} />
+                ))
+              }
+            </>
+          }
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', p: 2, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
           <TextField
             onKeyUp={(e) => {
