@@ -186,7 +186,7 @@ export default function Home() {
             }
           </Box>
         }
-        <Box sx={{ display: 'flex', p: 2, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', p: 2, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
           <TextField
             onKeyUp={(e) => {
               if (e.key === "Enter") {
@@ -196,6 +196,8 @@ export default function Home() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             fullWidth
+            maxRows={2}
+            multiline
             name="message" placeholder="Digite sua mensagem..."
             InputProps={{
               sx: {
