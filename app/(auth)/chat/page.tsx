@@ -1,17 +1,19 @@
 'use client'
 
-import { alpha, Box, Button, Chip, CircularProgress, Divider, Fab, IconButton, TextField, Typography, useTheme } from "@mui/material";
+import { alpha, Box, Chip, CircularProgress, Fab, IconButton, TextField, Typography, useTheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AuthService } from "@/app/services/auth.queries";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../globals.css";
 import socket from "./socket";
 import Header from "@/app/components/Header";
 import { Send } from "@mui/icons-material";
+import { Keyboard } from '@capacitor/keyboard';
+import { Capacitor } from "@capacitor/core";
 
 export interface Message {
   uuid?: string;
@@ -47,45 +49,53 @@ export default function Home() {
     if (!socket.connected) {
       socket.connect();
     }
-    socket.on('receive_message', (newMessage: Message) => {
-      queryClient.setQueryData<MessagesResponse>(['messages', uuid], (oldData) => {
-        if (!oldData) return { data: [newMessage] };
 
-        return {
-          ...oldData,
-          data: [...oldData.data, newMessage],
-        };
-      });
-
-      const objDiv = document.getElementById("scroll");
-      if (objDiv) {
-        setTimeout(() => {
+    if (Capacitor.isNativePlatform()) {
+      Keyboard.addListener('keyboardDidShow', info => {
+        const objDiv = document.getElementById("scroll");
+        if (objDiv) {
           objDiv.scrollTop = objDiv?.scrollHeight;
-        }, 500)
-      }
-    });
+        }
+      });
+    }
+    if (!socket.hasListeners('receive_message')) {
+      socket.on('receive_message', (newMessage: Message) => {
+        queryClient.setQueryData<MessagesResponse>(['messages', uuid], (oldData) => {
+          if (!oldData) return { data: [newMessage] };
+
+          return {
+            ...oldData,
+            data: [...oldData.data, newMessage],
+          };
+        });
+
+        const objDiv = document.getElementById("scroll");
+        if (objDiv) {
+          setTimeout(() => {
+            objDiv.scrollTop = objDiv?.scrollHeight;
+          }, 500)
+        }
+      });
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
-  useEffect(() => {
-    const objDiv = document.getElementById("scroll");
-    if (objDiv) {
-      setTimeout(() => {
-        objDiv.scrollTop = objDiv?.scrollHeight;
-      }, 500)
-    }
-  }, [])
-
   const sendMessage = () => {
     if (!message) return;
-
     socket.emit('send_message', {
       message,
       chats_uuid: uuid?.toString(),
       created_at: new Date(),
     });
     setMessage('');
+
+    const objDiv = document.getElementById("scroll");
+    if (objDiv) {
+      setTimeout(() => {
+        objDiv.scrollTop = objDiv?.scrollHeight;
+      }, 500)
+    }
   };
 
   const { data: chat, isLoading } = useQuery({
@@ -93,12 +103,19 @@ export default function Home() {
     queryFn: () => chatsService.getChat(uuid?.toString() || '').then(r => r),
   })
 
-  const { data: messagesData } = useQuery({
+  const { data: messagesData, isLoading: isMessagesLoading } = useQuery({
     queryKey: ['messages', uuid],
     queryFn: () => chatsService.getMessages(uuid?.toString() || '').then(r => r)
   })
 
   const messages = messagesData?.data ? messagesData?.data : []
+
+  useEffect(() => {
+    const objDiv = document.getElementById("scroll");
+    if (objDiv) {
+      objDiv.scrollTop = objDiv?.scrollHeight;
+    }
+  }, [isMessagesLoading])
 
   return (
     <Box sx={{ maxHeight: '100vh' }}>
@@ -229,3 +246,4 @@ export function MessageComponent({ message, user }: Props) {
     </Box>
   )
 }
+
