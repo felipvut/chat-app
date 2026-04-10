@@ -11,7 +11,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../globals.css";
 import socket from "./socket";
 import Header from "@/app/components/Header";
-import { Send } from "@mui/icons-material";
+import { Camera, PhotoCamera, Send } from "@mui/icons-material";
 import { Keyboard } from '@capacitor/keyboard';
 import { Capacitor } from "@capacitor/core";
 
@@ -200,12 +200,13 @@ export default function Home() {
           }
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', p: 2, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
+          {
+            message?.length === 0 &&
+            <IconButton sx={{ mr: 2 }}>
+              <PhotoCamera />
+            </IconButton>
+          }
           <TextField
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                sendMessage()
-              }
-            }}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             fullWidth
