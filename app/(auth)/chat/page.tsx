@@ -114,7 +114,6 @@ export default function Home() {
   useLayoutEffect(() => {
     const timeout = setTimeout(() => {
       const objDiv = document.getElementById("scroll");
-      console.log(objDiv)
       if (objDiv) {
         objDiv.scrollTop = objDiv.scrollHeight;
       }
