@@ -27,7 +27,7 @@ export default function MyProfile() {
 
   const { mutate, isPending } = useSaveProfile();
 
-  const { data: user, isFetching } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ['user', typeof window !== "undefined" && window?.localStorage?.getItem('@chat-app/token')],
     queryFn: () => authService.me().then(r => r),
   })
@@ -94,11 +94,11 @@ export default function MyProfile() {
           <Typography variant="h5" color="textPrimary" sx={{ fontWeight: 600 }}>Meu perfil</Typography>
         </Box>
         {
-          isFetching &&
+          isLoading &&
           <Typography color="textSecondary" sx={{ textAlign: 'center', mt: 3, mb: 3 }}>Carregando...</Typography>
         }
         {
-          (!isFetching) &&
+          (!isLoading) &&
           <>
             <Box
               component="form"
@@ -117,7 +117,8 @@ export default function MyProfile() {
                       '& .MuiBadge-badge': {
                         width: 36,
                         height: 36,
-                        borderRadius: '50%'
+                        borderRadius: '50%',
+                        background: 'rgb(13, 71, 161)'
                       }
                     }}
                     color="primary">
@@ -155,7 +156,7 @@ export default function MyProfile() {
                   type="submit"
                   color="primary"
                   size="large"
-                  sx={{ borderRadius: 4 }}
+                  sx={{ borderRadius: 4, background: 'rgb(13, 71, 161)' }}
                   disabled={isPending}
                   fullWidth>Salvar</Button>
               </Box>
