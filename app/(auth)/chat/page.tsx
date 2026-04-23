@@ -52,7 +52,7 @@ export default function Home() {
     }
 
     if (Capacitor.isNativePlatform()) {
-      Keyboard.addListener('keyboardDidShow', info => {
+      Keyboard.addListener('keyboardDidShow', () => {
         const objDiv = document.getElementById("scroll");
         if (objDiv) {
           objDiv.scrollTop = objDiv?.scrollHeight;
@@ -82,7 +82,7 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
-  const sendMessage = (base64: string | null) => {
+  const sendMessage = (base64: string | null = "") => {
     if (!message && !base64) return;
     socket.emit('send_message', {
       message,
@@ -236,7 +236,7 @@ export default function Home() {
                 borderRadius: 4,
               }
             }} />
-          <Fab variant="circular" sx={{ ml: 2, minWidth: 56, minHeight: 56 }} color="primary" onClick={sendMessage}>
+          <Fab variant="circular" sx={{ ml: 2, minWidth: 56, minHeight: 56 }} color="primary" onClick={() => sendMessage()}>
             <Send />
           </Fab>
           <input id="photo" type="file" name="file" onChange={(e) => { setPhoto(e.target.files) }} style={{ display: 'none' }} />

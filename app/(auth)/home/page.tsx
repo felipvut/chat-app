@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, ButtonBase, CircularProgress, Fab, ListItemText, TextField, Typography } from "@mui/material";
+import { Box, ButtonBase, CircularProgress, Fab, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChatsService } from "@/app/services/chats.queries";
@@ -85,6 +85,7 @@ export default function Home() {
             {
               filteredChats?.map((chat: Chat) => (
                 <ButtonBase key={chat?.uuid} onClick={() => {
+                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                   typeof window !== "undefined" && window?.localStorage?.setItem('@chat-app/chat', chat?.uuid || '')
                   router.push('/chat?uuid=' + chat?.uuid)
                 }}
