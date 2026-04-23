@@ -11,13 +11,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../globals.css";
 import socket from "./socket";
 import Header from "@/app/components/Header";
-import { Camera, PhotoCamera, Send } from "@mui/icons-material";
+import { PhotoCamera, Send } from "@mui/icons-material";
 import { Keyboard } from '@capacitor/keyboard';
 import { Capacitor } from "@capacitor/core";
 
 export interface Message {
   uuid?: string;
   message?: string;
+  files_uuid?: string;
   chats_uuid?: string;
   is_author?: boolean
   author_uuid?: string;
@@ -81,12 +82,13 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
 
-  const sendMessage = () => {
-    if (!message) return;
+  const sendMessage = (base64: string | null) => {
+    if (!message && !base64) return;
     socket.emit('send_message', {
       message,
       chats_uuid: uuid?.toString(),
       created_at: new Date(),
+      photo: base64
     });
     setMessage('');
 
@@ -121,6 +123,20 @@ export default function Home() {
 
     return () => clearTimeout(timeout);
   }, [messages]);
+
+  const setPhoto = (files: FileList | null) => {
+    if (!files) return;
+    if (files?.length <= 0) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onload = function () {
+      sendMessage(reader.result as string)
+    };
+    reader.onerror = function (error) {
+      console.log('Error: ', error);
+    };
+  }
 
   return (
     <Box sx={{ maxHeight: '100vh' }}>
@@ -201,7 +217,10 @@ export default function Home() {
         <Box sx={{ display: 'flex', alignItems: 'center', p: 2, width: '100%', position: 'fixed', left: 0, bottom: 0, background: '#fff' }}>
           {
             message?.length === 0 &&
-            <IconButton sx={{ mr: 2 }}>
+            <IconButton sx={{ mr: 2 }} onClick={() => {
+              const photo = document.getElementById('photo')
+              photo?.click?.()
+            }}>
               <PhotoCamera />
             </IconButton>
           }
@@ -220,6 +239,7 @@ export default function Home() {
           <Fab variant="circular" sx={{ ml: 2, minWidth: 56, minHeight: 56 }} color="primary" onClick={sendMessage}>
             <Send />
           </Fab>
+          <input id="photo" type="file" name="file" onChange={(e) => { setPhoto(e.target.files) }} style={{ display: 'none' }} />
           {/* <Button sx={{ ml: 2 }} onClick={sendMessage}>Enviar</Button> */}
         </Box>
       </Box>
@@ -237,7 +257,15 @@ export function MessageComponent({ message, user }: Props) {
 
   const messageMemo = useMemo(() => (
     <Box sx={{ textAlign: message?.author_uuid == user?.data?.person?.uuid ? 'right' : 'left', mb: 3 }}>
-      <Chip label={message.message}
+      <Chip label={
+        message.files_uuid ?
+          <Image 
+          src={message.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${message.files_uuid}` : '/user.png'} 
+          width={200} height={200} unoptimized={true}
+          alt={"Arquivo enviado"} style={{ borderRadius: 8, width: '200px', height: 'auto' }} />
+          :
+          message.message
+      }
         color={message?.author_uuid == user?.data?.person?.uuid ? 'primary' : 'default'}
         sx={{
           height: 'auto',
@@ -253,7 +281,7 @@ export function MessageComponent({ message, user }: Props) {
             maxWidth: '78vw'
           },
         }} />
-    </Box>), [message?.author_uuid, message.message, user?.data?.person?.uuid]);
+    </Box>), [message?.author_uuid, message.files_uuid, message.message, user?.data?.person?.uuid]);
 
   return (
     <Box>
