@@ -59,25 +59,26 @@ export default function Home() {
         }
       });
     }
-    if (!socket.hasListeners('receive_message')) {
-      socket.on('receive_message', (newMessage: Message) => {
-        queryClient.setQueryData<MessagesResponse>(['messages', uuid], (oldData) => {
-          if (!oldData) return { data: [newMessage] };
-
-          return {
-            ...oldData,
-            data: [...oldData.data, newMessage],
-          };
-        });
-
-        const objDiv = document.getElementById("scroll");
-        if (objDiv) {
-          setTimeout(() => {
-            objDiv.scrollTop = objDiv?.scrollHeight;
-          }, 500)
-        }
-      });
+    if (socket.hasListeners('receive_message')) {
+      socket.off('receive_message')
     }
+    socket.on('receive_message', (newMessage: Message) => {
+      queryClient.setQueryData<MessagesResponse>(['messages', uuid], (oldData) => {
+        if (!oldData) return { data: [newMessage] };
+
+        return {
+          ...oldData,
+          data: [...oldData.data, newMessage],
+        };
+      });
+
+      const objDiv = document.getElementById("scroll");
+      if (objDiv) {
+        setTimeout(() => {
+          objDiv.scrollTop = objDiv?.scrollHeight;
+        }, 500)
+      }
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid])
@@ -259,10 +260,10 @@ export function MessageComponent({ message, user }: Props) {
     <Box sx={{ textAlign: message?.author_uuid == user?.data?.person?.uuid ? 'right' : 'left', mb: 3 }}>
       <Chip label={
         message.files_uuid ?
-          <Image 
-          src={message.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${message.files_uuid}` : '/user.png'} 
-          width={200} height={200} unoptimized={true}
-          alt={"Arquivo enviado"} style={{ borderRadius: 8, width: '200px', height: 'auto' }} />
+          <Image
+            src={message.files_uuid ? `${process.env.NEXT_PUBLIC_API_URL}/get-file/${message.files_uuid}` : '/user.png'}
+            width={200} height={200} unoptimized={true}
+            alt={"Arquivo enviado"} style={{ borderRadius: 8, width: '200px', height: 'auto' }} />
           :
           message.message
       }
